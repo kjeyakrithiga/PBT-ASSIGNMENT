@@ -1,0 +1,130 @@
+    
+
+                                BUS TICKET RESERVATION
+   ________________________________________________________________________________________________________
+
+    CUSTOMER DETAILS:-
+ 
+    1. SIGN_UP:
+    
+    UserId(pk)   Name   Age  Gender  Mobile_number   Aadhar_number    City    Country   State    EmailId
+    _ _ _ _ _    _ _ _  _ _  _ _ _   _ _ _ _ _ _ _   _ _ _ _ _ _ _    _ _     _ _ _ _   _ _ _    _ _ _ _
+ 
+    2. CONFIDENTIAL_DETAILS:
+  
+    UserId(pk)   Username    Password
+    _ _ _ _ _    _ _ _ _     _ _ _ _ 
+
+    _________________________________________________________________________________________________________    
+
+    BUS DETAILS :-
+ 
+    3. BUS_DETAILS:
+ 
+    BusId(pk)   Bus_no  Travels_id    Route_id   Time_id
+    _ _ _ _ _   _ _ _   _ _ _ _ _     _ _ _ _    _ _ _ _
+
+    4. TIMING_DETAILS:
+
+    BusId   Time_id(pk)   Arrival_time   Depart_time
+    _ _ _   _ _ _ _ _ _   _ _ _ _ _ _    _ _ _ _ _ _
+
+   5. AVAILABILITY_DETAILS:
+
+    BusId(pk)   No_of_seats_available   Seats_under_booking_process 
+    _ _ _ _ _   _ _ _ _ _ _ _ _ _ _ _   _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+   __________________________________________________________________________________________________________
+   
+   ROUTE DETAILS:-
+
+   6. ROUTE_DETAILS: 
+
+   Route_id(pk)   City_from_id   City_to_id   No_of_stops_between    Distance   
+   _ _ _ _ _ _    _ _ _ _ _ _ _  _ _ _ _ _    _ _ _ _ _ _ _ _ _ _    _ _ _ _ 
+
+   7. CITY_DETAILS:
+
+   City_id(pk)  Name  Pin_code
+   _ _ _ _ _    _ _   _ _ _ _ 
+
+   8. TRAVELS_DETAILS:
+
+   Travels_id(pk)  Type  Travels_name   Number_of_cities_covering
+   _ _ _ _ _ _ _   _ _    _ _ _ _ _ _   _ _ _ _ _ _ _ _ _ _ _ _ _ 
+   
+   ___________________________________________________________________________________________________________
+
+   STOP DETAILS:-
+   ___________________________________________________________________________________________________________
+
+   BOOKING DETAILS :-
+
+   9. TRIP_DETAILS:
+  
+   UserId(pk)   No_of_seats_booked   BusId   Date_of_trip   Source    Destination 
+   _ _ _ _ _    _ _ _ _ _ _ _ _ _     _ _    _ _ _ _ _ _    _ _ _ _   _ _ _ _ _ _
+
+   10. PASSENGER_DETAILS:
+
+   Passenger_id(pk)  Passenger_name  Age_id  Gender  Under_userId
+   _ _ _ _ _ _ _ _   _ _ _ _ _ _ _   _ _ _   _ _ _   _ _ _ _ _ _ 
+
+   11. AGE_DETAILS:
+
+   Age_id(pk)   Age_category(1-10,10-18,18-55,55<)   Date
+   _ _ _ _ _    _ _ _ _ _ _    _ _ 
+
+   12.  FARE_DETAILS:
+
+   Age_id   Seat_type   Fare 
+   _ _ _    _ _ _ _ _   _ _
+
+
+   _____________________________________________________________________________________________________________   
+
+   SEAT DETAILS:-
+
+   13. SEAT_IDENTITIES_IN_BUS:
+
+   Seat_id(pk)  BusId   Seat_number   Seat_type[window,middle,side]   Available_or_not    On_date
+   _ _ _ _      _ _ _   _ _ _ _ _ _   _ _ _ _ _                       _ _ _ _ _ _ _ _     _ _ _ _ 
+
+   14. BOOKED_SEATS:
+  
+   Seat_id   Passenger_id   Travel_date         
+   _ _ _ _   _ _ _ _ _ _    _ _ _ _ _ _
+
+   
+   15. CANCELLED_SEATS:
+ 
+   Seat_id      
+   _ _ _ _
+   _____________________________________________________________________________________________________________ 
+
+   
+
+   QUERIES:-
+    
+   i) To check availability on a particular date in a particular bus:
+ 
+    SELECT  COUNT(Seat_id)  FROM  SEAT_IDENTITIES_IN_BUS  GROUP_BY  Available_or_not  HAVING BusId = ?;
+
+
+   ii) To query the number of passengers travelled on a particular day in a particular bus:
+
+   SELECT   SUM(No_of_seats_booked)  FROM TRIP_DETAILS WHERE Date_of_trip = ? and BusId = ?;
+
+
+   iii) To query the number of male and female passengers travelled on a particular day in a particular bus:
+
+   SELECT  COUNT(p.Passenger_id) FROM PASSENGER_DETAILS p JOIN BOOKED_SEATS b ON  p.Passenger_id = b.Passenger_id  GROUP_BY  p.Gender  HAVING  
+   b.Travel_date = ?;
+
+   iv) To query the customers travelling frequently through a particular route: (***)
+   
+   SELECT MAX(COUNT(t.UserID))   FROM TRIP_DETAILS t JOIN  BUS_DETAILS b  ON  t.BusId = b.BusId  GROUP_BY  b.Route_id HAVING b.Route_id = ?;
+
+   v) To  query the customers travelling in a couple: (****)
+
+   SELECT  COUNT(Under_UserId)  FROM  PASSENGER_DETAILS  GROUP_BY Under_UserId HAVING ...... ?;      
